@@ -14,7 +14,13 @@ def build_model(
     #transformer = TransformerBlock(num_heads=num_heads, ff_dim=ff_dim, embed_dim = head_size, rate=dropout)
     inputs = tf.keras.Input(shape=(input_shape))
     #x = tf.keras.layers.Lambda(lambda x: tf.keras.backend.expand_dims(inputs, 1)),
-    x = tf.keras.backend.expand_dims(inputs, 1)
+    # avoids tf error
+    class MyLayer(tf.keras.Layer):
+        def call(self, x):
+            return K.expand_dims(x, 1)
+
+    x = MyLayer()(inputs)
+    #x = tf.keras.backend.expand_dims(inputs, 1)
     for _ in range(num_transformer_blocks):
         #x = keras_nlp.layers.TransformerEncoder().call(x)
         #x = transformer.call(x)
