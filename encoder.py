@@ -1,5 +1,7 @@
 import tensorflow as tf
 import tensorflow.keras.backend as K
+import keras
+
 def build_model(
     input_shape,
     head_size,
@@ -15,6 +17,7 @@ def build_model(
     inputs = tf.keras.Input(shape=(input_shape))
     #x = tf.keras.layers.Lambda(lambda x: tf.keras.backend.expand_dims(inputs, 1)),
     # avoids tf error
+    @keras.saving.register_keras_serializable()
     class MyLayer(tf.keras.Layer):
         def call(self, x):
             return K.expand_dims(x, 1)

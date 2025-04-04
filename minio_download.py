@@ -95,7 +95,6 @@ def main():
     print('TESTING DOWNLOADER')
     def my_query(df: pd.DataFrame) -> pd.DataFrame:
         df = df.query("Error.isnull() and not ArticleText.isnull()").drop_duplicates(subset=['ArticleText'], keep=False)
-        
         return df[['Domain','expanded_url', 'created_utc', 'Rating', 'ArticleTitle','ArticleText', 'Keywords']]
         
     df = GetMinioArticles().get_articles_from_minio(my_query=my_query, no_save=False)

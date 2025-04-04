@@ -178,5 +178,15 @@ cython_debug/
 
 # Logs and reports
 *.log
+nohup.out
 
+# models
+*.keras
+*.model
 
+# notebooks
+*.ipynb
+
+# data
+*.pkl
+*.csv
