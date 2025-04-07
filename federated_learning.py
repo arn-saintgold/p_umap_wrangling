@@ -42,10 +42,12 @@ def main():
     
     #start federetad learning
     
-    precomputed_embeddings = False
+    precomputed_embeddings = True
     if precomputed_embeddings:
         with open('../p_umap_wrangling/embeddings.pkl','rb') as handle:
             embeddings = pickle.load(handle)
+        texts = texts[:len(embeddings)]
+        df = df[:len(embeddings)]
     # EMBED TEXTS
     else:
         texts = df.ArticleTitle + df.ArticleText
@@ -84,7 +86,7 @@ def main():
     # Iterate through splits
     for i, idx in enumerate(indices):
         print(f'FITTING MODEL {i}')
-        print(embeddings.shape)
+        print(f'{embeddings.shape = }')
 
         hdbscan_model = HDBSCAN(min_cluster_size=5, metric='euclidean', cluster_selection_method='leaf', gen_min_span_tree=True)
         vectorizer_model = CountVectorizer(min_df=3,stop_words='english', ngram_range=(1,2))
@@ -110,12 +112,14 @@ def main():
     models = [merged_model]
     
     topic_df = merged_model.get_document_info(df.ArticleText)
-    N_topics = len(merged_model.get_topic_info)
+    N_topics = len(merged_model.get_topic_info())
     print(f"{N_topics} FOUND")
     
     noise_idx = np.where(topic_df.Topic == -1)
-    noise_texts = topic_df.iloc[noise_idx].ArticleText
+    noise_texts = topic_df.iloc[noise_idx].Document
     noise_embeddings = embeddings[noise_idx]
+    print(f"{len(noise_texts)=}")
+    print(f"{len(noise_embeddings)=}")
 
     # SPLIT EMBEDDINGS
     n_splits = len(noise_embeddings)//25_000 +1
@@ -132,10 +136,11 @@ def main():
         ctfidf_model = ClassTfidfTransformer()
         
         print(f'REDUCE NOISE EMBEDDINGS')
-        
+        print(f"{max(idx)=}")
         emb_split = reducer.transform(noise_embeddings[idx])  # Select rows from the NumPy array
-        text_split = [noise_texts[j] for j in idx]  # Select rows from the text list
-
+        print(f"{len(emb_split)=}")
+        text_split = noise_texts.iloc[idx]#[noise_texts[j] for j in idx]  # Select rows from the text list
+        print(f"{len(text_split)=}")
         print(f"CREATE NOISE TOPIC MODEL")
         # Create topic models
         topic_model = BERTopic(umap_model=empty_dimensionality_model,
@@ -151,7 +156,7 @@ def main():
     
     print('SAVING MODEL')
     os.makedirs('topic_models', exist_ok = True)
-    merged_model.save(os.path.join('topic_models','merged.topic.model'), save_embedding_model=True)
+    merged_model.save(os.path.join('topic_models','merged.topic.model'), save_embedding_model=True,save_ctfidf=True)
 
     print(f"{len(merged_model.get_topic_info()) - N_topics} NEW TOPICS FOUND")
 

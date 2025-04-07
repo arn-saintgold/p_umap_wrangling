@@ -1,3 +1,4 @@
+# adapted from https://github.com/ryanon4/Parametric-Metric-Learning-with-Attention
 import tensorflow as tf
 import tensorflow.keras.backend as K
 import keras
