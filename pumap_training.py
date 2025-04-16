@@ -50,7 +50,6 @@ print(type(mistral_embeddings))
 dims = mistral_embeddings[0].shape
 print('INITIALIZE PARAMETRIC UMAP 🧣🧣🧣')
 
-
 dimension=20
 batch_size = 4#1024*4
 
