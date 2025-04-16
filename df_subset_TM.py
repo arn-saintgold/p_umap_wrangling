@@ -86,7 +86,7 @@ def TM_diagnosis(model, docs, embeddings=None, umap_model= None, hdbscan_model =
             print('INITIALIZE PARAMETRIC UMAP 🧣🧣🧣')
 
             dims = combo_time_embeddings[0].shape
-            dimension=20
+            
             batch_size = len(embeddings)//4+1
 
             encoder = build_model(

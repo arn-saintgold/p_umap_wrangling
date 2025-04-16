@@ -190,3 +190,6 @@ nohup.out
 # data
 *.pkl
 *.csv
+
+# images
+*.png
